@@ -1,25 +1,29 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-const session = require('express-session');
+const session = require('express-session');  //temporary server-side sessions
 const MongoStore = require('connect-mongo');
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
 const authRoutes = require('./routes/auth.js');
 const cors = require('cors');
 require('dotenv').config();
-
+console.log('Google ID loaded:', !!process.env.GOOGLE_CLIENT_ID);
 
 app.use(cors({
-    origin: process.env.CLIENT_URL || 'https://localhost:3000',
+    origin: process.env.CLIENT_URL || 'http://localhost:3000',
     credentials: true
 }));
 app.use(express.json());
+app.use(cookieParser());  
 
-// sessions
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninstalized: false,
-    store: MongoStore.create({mongourl: process.env.MONGODB_URI}),
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URI
+    }),
     cookie: {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -27,6 +31,10 @@ app.use(session({
         maxAge: 14*24*60*60*1000
     }
 }));
+
+require('./config/passport.js');
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/auth', authRoutes);
 app.get('/', (req, res) => res.send("Auth server running"));
