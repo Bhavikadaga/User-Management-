@@ -4,11 +4,10 @@ const mongoose = require('mongoose');
 const session = require('express-session');  //temporary server-side sessions
 const MongoStore = require('connect-mongo');
 const cookieParser = require('cookie-parser');
-const passport = require('passport');
+const passport = require('passport'); //OAuth authentication library
 const authRoutes = require('./routes/auth.js');
 const cors = require('cors');
 require('dotenv').config();
-console.log('Google ID loaded:', !!process.env.GOOGLE_CLIENT_ID);
 
 app.use(cors({
     origin: process.env.CLIENT_URL || 'http://localhost:3000',

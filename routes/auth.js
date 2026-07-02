@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const { signup, login, logout, oauthCallback } = require('../controller/userController.js');
+const { signup, login, logout, oauthCallback, sendVerifyEmail, verifyEmail, forgotPassword, resetPassword} = require('../controller/userController.js');
+
 
 router.post('/signup', signup);
 router.post('/login', login);
@@ -20,6 +21,10 @@ router.get('/github',
 router.get('/github/callback',
     passport.authenticate('github', {failureRedirect: '/'}),
     oauthCallback
-)
+);
+router.post('/send-verify-email', sendVerifyEmail);
+router.get('/verify-email', verifyEmail);
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
 
 module.exports = router;
